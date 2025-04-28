@@ -44,10 +44,4 @@ public class TaskController {
         taskService.createMultipleChoiceTask(dto);
         return ResponseEntity.ok("Atividade de múltipla escolha criada com sucesso!");
     }
-
-    @PostMapping("/course/{id}/publish")
-    public ResponseEntity<String> publishCourse(@PathVariable Long id) {
-        taskService.publishCourse(id);
-        return ResponseEntity.ok("Curso publicado com sucesso!");
-    }
 }

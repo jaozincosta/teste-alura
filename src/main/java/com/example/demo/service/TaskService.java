@@ -103,7 +103,7 @@ public class TaskService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado com ID: " + id));
 
-        List<Task> tasks = taskRepository.findAllByCourseIdOrderByOrderNumber(id);
+        List<Task> tasks = taskRepository.findByCourseIdOrderByOrderNumberAsc(id);
 
         if (tasks.isEmpty()) {
             throw new IllegalStateException("O curso precisa ter pelo menos uma atividade para ser publicado.");
@@ -137,7 +137,7 @@ public class TaskService {
             throw new IllegalStateException("O curso não está no status BUILDING.");
         }
 
-        List<Task> tasks = taskRepository.findAllByCourseIdOrderByOrderNumber(courseId);
+        List<Task> tasks = taskRepository.findByCourseIdOrderByOrderNumberAsc(courseId);
 
         if (!tasks.isEmpty()) {
             if (newOrder > tasks.size() + 1) {
