@@ -79,7 +79,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-
 		<!-- Teste: JUnit 5 e Mockito -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -122,8 +121,6 @@
 			<version>5.10.0</version>
 			<scope>test</scope>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
