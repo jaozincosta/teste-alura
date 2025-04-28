@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CourseResponseDTO;
+import com.example.demo.dto.TaskResponseDTO;
 import com.example.demo.model.Course;
 import com.example.demo.model.Task;
 import com.example.demo.repository.CourseRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +45,41 @@ public class CourseService {
         courseRepository.save(course);
     }
 
+    public List<CourseResponseDTO> listAllCourses() {
+        return courseRepository.findAll()
+                .stream()
+                .map(course -> new CourseResponseDTO(
+                        course.getId(),
+                        course.getName(),
+                        course.getStatus(),
+                        course.getPublishedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public List<TaskResponseDTO> getTasksByCourseId(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado."));
+
+        if (!"PUBLISHED".equals(course.getStatus())) {
+            throw new IllegalStateException("Curso ainda não está publicado.");
+        }
+
+        List<Task> tasks = taskRepository.findByCourseIdOrderByOrderNumberAsc(courseId);
+
+        return tasks.stream()
+                .map(task -> new TaskResponseDTO(
+                        task.getId(),
+                        task.getStatement(),
+                        task.getActivityType(),
+                        task.getOrderNumber()
+                ))
+                .collect(Collectors.toList());
+    }
+
     private void validateContinuousOrder(List<Task> tasks) {
         for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getOrderNumber() != i + 1) {
+            if (!tasks.get(i).getOrderNumber().equals(i + 1)) {
                 throw new IllegalStateException("As atividades devem ter ordens contínuas (1, 2, 3...).");
             }
         }
