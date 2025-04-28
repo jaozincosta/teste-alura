@@ -43,10 +43,39 @@ public class TaskService {
         }
     }
 
+    private void validateOrder(Long courseId, Integer newOrder) {
+        if (newOrder == null || newOrder <= 0) {
+            throw new IllegalArgumentException("A ordem deve ser um número inteiro positivo.");
+        }
+
+        List<Task> tasks = taskRepository.findByCourseId(courseId);
+
+        int maxOrder = tasks.stream()
+                .mapToInt(Task::getOrderNumber)
+                .max()
+                .orElse(0);
+
+        if (newOrder > maxOrder + 1) {
+            throw new IllegalArgumentException("Não é permitido criar uma atividade com ordem fora de sequência. Ordem máxima atual: " + maxOrder);
+        }
+    }
+
+    private void shiftTasksOrderIfNeeded(Long courseId, Integer newOrder) {
+        List<Task> tasks = taskRepository.findByCourseId(courseId);
+
+        tasks.stream()
+                .filter(task -> task.getOrderNumber() >= newOrder)
+                .forEach(task -> task.setOrderNumber(task.getOrderNumber() + 1));
+
+        taskRepository.saveAll(tasks);
+    }
+
     @Transactional
     public void createOpenTextTask(OpenTextTaskDTO dto) {
         validateStatement(dto.getStatement());
         validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
+        validateOrder(dto.getCourseId(), dto.getOrder());
+        shiftTasksOrderIfNeeded(dto.getCourseId(), dto.getOrder());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
@@ -64,6 +93,8 @@ public class TaskService {
     public void createSingleChoiceTask(SingleChoiceTaskDTO dto) {
         validateStatement(dto.getStatement());
         validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
+        validateOrder(dto.getCourseId(), dto.getOrder());
+        shiftTasksOrderIfNeeded(dto.getCourseId(), dto.getOrder());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
@@ -91,6 +122,8 @@ public class TaskService {
     public void createMultipleChoiceTask(MultipleChoiceTaskDTO dto) {
         validateStatement(dto.getStatement());
         validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
+        validateOrder(dto.getCourseId(), dto.getOrder());
+        shiftTasksOrderIfNeeded(dto.getCourseId(), dto.getOrder());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
