@@ -10,17 +10,17 @@ public class OptionTask {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "option_text")
+    @Column(name = "option_text", nullable = false, length = 80)
     private String optionText;
 
-    @Column(name = "is_correct")
+    @Column(name = "is_correct", nullable = false)
     private Boolean isCorrect;
 
     @ManyToOne
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    // Getters and Setters
+    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -38,7 +38,7 @@ public class OptionTask {
         this.optionText = optionText;
     }
 
-    public Boolean getIsCorrect() {
+    public Boolean isCorrect() {
         return isCorrect;
     }
 
