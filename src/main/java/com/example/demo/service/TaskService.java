@@ -32,9 +32,21 @@ public class TaskService {
         }
     }
 
+    private void validateDuplicateStatement(Long courseId, String statement) {
+        List<Task> tasks = taskRepository.findByCourseId(courseId);
+
+        boolean exists = tasks.stream()
+                .anyMatch(task -> task.getStatement().equalsIgnoreCase(statement));
+
+        if (exists) {
+            throw new IllegalArgumentException("Já existe uma atividade com esse enunciado para este curso.");
+        }
+    }
+
     @Transactional
     public void createOpenTextTask(OpenTextTaskDTO dto) {
         validateStatement(dto.getStatement());
+        validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
@@ -51,6 +63,7 @@ public class TaskService {
     @Transactional
     public void createSingleChoiceTask(SingleChoiceTaskDTO dto) {
         validateStatement(dto.getStatement());
+        validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
@@ -77,6 +90,7 @@ public class TaskService {
     @Transactional
     public void createMultipleChoiceTask(MultipleChoiceTaskDTO dto) {
         validateStatement(dto.getStatement());
+        validateDuplicateStatement(dto.getCourseId(), dto.getStatement());
 
         Task task = new Task();
         task.setStatement(dto.getStatement());
