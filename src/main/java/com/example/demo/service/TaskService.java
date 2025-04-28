@@ -6,19 +6,24 @@ import com.example.demo.dto.MultipleChoiceTaskDTO;
 import com.example.demo.model.Course;
 import com.example.demo.model.Task;
 import com.example.demo.model.OptionTask;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.TaskRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final CourseRepository courseRepository;
 
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    @Transactional
+    public Course saveCourse(Course course) {
+        return courseRepository.save(course);
     }
 
     private void validateStatement(String statement) {
