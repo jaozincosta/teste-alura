@@ -6,7 +6,7 @@ Projeto desenvolvido como parte do processo seletivo para a vaga de Desenvolvedo
 
 ## Tecnologias utilizadas
 
-- Java 18
+- Java 21
 - Spring Boot
 - Spring Data JPA
 - Spring Security (bônus)
